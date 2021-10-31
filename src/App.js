@@ -1,7 +1,9 @@
+import Album from "./components/Album";
+
 function App() {
   return (
     <div className="App">
-      <h1>react project cleaned</h1>
+      <Album />
     </div>
   );
 }
