@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`landing component snapshot with Enzyme 1`] = `
+<ContextConsumer>
+  <Component />
+</ContextConsumer>
+`;
