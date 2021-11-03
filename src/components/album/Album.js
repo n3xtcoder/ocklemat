@@ -4,11 +4,10 @@ import AlbumImage from "../albumImage/AlbumImage";
 import "./album.css";
 import CloseIcon from "@material-ui/icons/Close";
 import BtnModal from "./BtnModal";
-import { Link, Route, useLocation, useHistory } from "react-router-dom";
+import { Link, Route, useHistory, Switch } from "react-router-dom";
 
 function Album() {
-  const { albums, getData, slideIndex, setSlideIndex } =
-    useContext(AlbumContext);
+  const { albums, getData } = useContext(AlbumContext);
 
   useEffect(() => {
     getData();
@@ -18,85 +17,85 @@ function Album() {
   //* Slider Controls
   ///////////
 
-  const location = useLocation();
   const history = useHistory();
-  const { state = {} } = location;
-  const { modal } = state;
 
-  const nextSlide = () => {
-    if (slideIndex >= albums.length - 1) {
-      location.pathname = `/album/${albums[0].id}`;
-      setSlideIndex(0);
+  const nextSlide = (index) => {
+    if (index === albums.length - 1) {
+      setHistory(albums[0].id);
     } else {
-      history?.push({
-        pathname: `/album/${albums[slideIndex + 1].id}`,
-        state: { modal: true },
-      });
-      setSlideIndex(slideIndex + 1);
+      setHistory(albums[index + 1].id);
     }
   };
 
-  const prevSlide = () => {
-    if (slideIndex === 0) {
-      history?.push({
-        pathname: `/album/${albums[albums.length - 1].id}`,
-        state: { modal: true },
-      });
-      setSlideIndex(albums.length - 1);
+  const prevSlide = (index) => {
+    if (index === 0) {
+      setHistory(albums[albums.length - 1].id);
     } else {
-      history?.push({
-        pathname: `/album/${albums[slideIndex - 1].id}`,
-        state: { modal: true },
-      });
-      setSlideIndex(slideIndex - 1);
+      setHistory(albums[index - 1].id);
     }
+  };
+
+  const setHistory = (id) => {
+    history?.push({
+      pathname: `/slider/${id}`,
+      state: { modal: true },
+    });
   };
 
   return (
     <div className="Album_Wrapper">
-      {albums && modal && (
-        <Route
-          path="/album/:id"
-          children={({ match, history }) => {
-            const id = +match?.params.id;
-            const imageIndex =
-              id && albums.findIndex((image) => image.id === id);
-            setSlideIndex(imageIndex);
+      {albums && (
+        <Switch>
+          {" "}
+          <Route
+            path="/slider/:id"
+            children={({ match, history }) => {
+              const id = +match?.params.id;
+              const imageIndex =
+                id && albums.findIndex((image) => image.id === id);
+              if (imageIndex < 0) {
+                return null;
+              }
 
-            const close = (e) => {
-              e.stopPropagation();
-              history.push("/");
-            };
+              const close = (e) => {
+                e.stopPropagation();
+                history.push("/");
+              };
 
-            return (
-              <div className="modal open">
-                <div>
-                  <img
-                    className="modal-image"
-                    src={albums[slideIndex].url}
-                    alt={albums[slideIndex].title}
-                  />
+              return (
+                <div className="modal open">
+                  <div>
+                    <img
+                      className="modal-image"
+                      src={albums[imageIndex].url}
+                      alt={albums[imageIndex].title}
+                    />
 
-                  <CloseIcon className="modal-close-btn" onClick={close}>
-                    close modal
-                  </CloseIcon>
+                    <CloseIcon className="modal-close-btn" onClick={close}>
+                      close modal
+                    </CloseIcon>
 
-                  <BtnModal moveSlide={nextSlide} direction={"next"} />
-                  <BtnModal moveSlide={prevSlide} direction={"prev"} />
+                    <BtnModal
+                      moveSlide={() => nextSlide(imageIndex)}
+                      direction={"next"}
+                    />
+                    <BtnModal
+                      moveSlide={() => prevSlide(imageIndex)}
+                      direction={"prev"}
+                    />
+                  </div>
                 </div>
-              </div>
-            );
-          }}
-        />
+              );
+            }}
+          />
+        </Switch>
       )}
 
       <div className="Album_GridContainer">
         {albums &&
           albums.map((item, index) => {
             return (
-              <Link
-                to={{ pathname: `/album/${item.id}`, state: { modal: true } }}
-              >
+              <Link to={{ pathname: `/slider/${item.id}` }}>
                 {" "}
                 <AlbumImage
                   className="Album_gridImage"

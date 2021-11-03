@@ -5,10 +5,6 @@ export const AlbumContext = createContext();
 export const AlbumContextProvider = ({ children }) => {
   const [albums, setAlbums] = useState();
 
-  const [modal, setModal] = useState(false);
-  const [clickedImg, setClickedImg] = useState("");
-  const [slideIndex, setSlideIndex] = useState(0);
-
   const getData = async () => {
     try {
       const response = await fetch(
@@ -27,8 +23,6 @@ export const AlbumContextProvider = ({ children }) => {
       value={{
         albums,
         getData,
-        slideIndex,
-        setSlideIndex,
       }}
     >
       {children}
