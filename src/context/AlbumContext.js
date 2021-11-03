@@ -27,9 +27,6 @@ export const AlbumContextProvider = ({ children }) => {
       value={{
         albums,
         getData,
-        modal,
-        setModal,
-        clickedImg,
         slideIndex,
         setSlideIndex,
       }}

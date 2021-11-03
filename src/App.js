@@ -10,13 +10,16 @@ import Login from "./components/login/Login";
 
 function App() {
   const [imgUpload, setImgUpload] = useState(0);
+  const [tooBig, setTooBig] = useState(false);
 
   const fileSizeValidator = (file) => {
     const uploadedFile = file.target.files[0];
     if (uploadedFile.size > 50000000) {
       console.log("File size cannot exceed more than 50MB");
+      setTooBig(true);
     } else {
       upload(uploadedFile);
+      setTooBig(false);
     }
   };
 
@@ -73,6 +76,11 @@ function App() {
             onChange={fileSizeValidator}
             accept=".mp4,image/*, .mkv"
           />
+          {tooBig ? (
+            <div>File size cannot exceed more than 50MB</div>
+          ) : (
+            <div></div>
+          )}
           <LinearProgress
             variant="determinate"
             value={imgUpload}
