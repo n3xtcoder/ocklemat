@@ -1,20 +1,14 @@
-import React, { useContext } from "react";
+import React from "react";
 import "./albumImage.css";
-import { AlbumContext } from "../../context/AlbumContext";
 
-const AlbumImage = ({ image }) => {
-  const { showImg } = useContext(AlbumContext);
-  const handleClick = (image) => {
-    showImg(image);
-  };
-
+const AlbumImage = ({ image, onClick }) => {
   return (
     <>
       <img
         className="Album_gridImage"
-        src={image.url}
+        src={image.thumbnailUrl}
         alt={image.title}
-        onClick={() => handleClick(image)}
+        onClick={onClick}
       />
     </>
   );

@@ -9,13 +9,6 @@ export const AlbumContextProvider = ({ children }) => {
   const [clickedImg, setClickedImg] = useState("");
   const [slideIndex, setSlideIndex] = useState(0);
 
-  const showImg = (img) => {
-    setClickedImg(img);
-    setModal(true);
-    setSlideIndex(img.id - 1);
-    console.log(img.id);
-  };
-
   const getData = async () => {
     try {
       const response = await fetch(
@@ -25,18 +18,15 @@ export const AlbumContextProvider = ({ children }) => {
       // console.log(obj);
       setAlbums(obj);
     } catch (error) {
-      //   console.log(error.response.data.error);
       console.log(error);
     }
   };
-  console.log(`Albums >>>`, albums);
 
   return (
     <AlbumContext.Provider
       value={{
         albums,
         getData,
-        showImg,
         modal,
         setModal,
         clickedImg,

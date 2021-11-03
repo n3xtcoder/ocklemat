@@ -1,14 +1,15 @@
 import { render, screen } from "@testing-library/react";
 import App from "../App";
-import { BrowserRouter as Router } from "react-router-dom";
 import { AlbumContextProvider } from "../context/AlbumContext";
+import { BrowserRouter as Router } from "react-router-dom";
 
 test("renders homepage header: ALBUM - Rhm", () => {
   render(
-    <AlbumContextProvider>
-      <App />
-    </AlbumContextProvider>
+    <Router>
+      <AlbumContextProvider>
+        <App />
+      </AlbumContextProvider>
+    </Router>
   );
-  //   const linkElement = screen.getByText(/ALBUM/i);
   expect(screen.getByText("ALBUM - Rhm")).toBeTruthy();
 });

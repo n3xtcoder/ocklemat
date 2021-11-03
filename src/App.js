@@ -1,6 +1,5 @@
 import Album from "./components/album/Album";
 import "./App.css";
-
 import { Upload } from "@aws-sdk/lib-storage";
 import { S3Client } from "@aws-sdk/client-s3";
 import { LinearProgress } from "@material-ui/core";
@@ -23,6 +22,7 @@ function App() {
 
   const upload = (file) => {
     console.log("uploaded file", file);
+
     setImgUpload(0);
 
     const target = {
@@ -46,7 +46,11 @@ function App() {
       });
       console.log(`parallel`, parallelUploads3);
       parallelUploads3.on("httpUploadProgress", (progress) => {
-        console.log(progress);
+        const uploadPercent = Math.floor(
+          (progress.loaded * 100) / progress.total
+        );
+        console.log("upload %", uploadPercent);
+        setImgUpload(uploadPercent);
       });
 
       parallelUploads3.done();
@@ -60,7 +64,7 @@ function App() {
   return (
     <div className="App">
       <Switch>
-        <PrivateRoute exact path="/">
+        <PrivateRoute path="/">
           <h1 data-testid="header-test" className="App_Header">
             ALBUM - Rhm
           </h1>
@@ -70,10 +74,10 @@ function App() {
             accept=".mp4,image/*, .mkv"
           />
           <LinearProgress
-            variant="buffer"
+            variant="determinate"
             value={imgUpload}
             valueBuffer={imgUpload}
-            color="secondary"
+            color={"secondary"}
           />
           <Album />
         </PrivateRoute>

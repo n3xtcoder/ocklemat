@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`landing component snapshot with Enzyme 1`] = `
+<ContextProvider
+  value={
+    Object {
+      "albums": undefined,
+      "clickedImg": "",
+      "getData": [Function],
+      "modal": false,
+      "setModal": [Function],
+      "setSlideIndex": [Function],
+      "slideIndex": 0,
+    }
+  }
+>
+  <Album />
+</ContextProvider>
+`;

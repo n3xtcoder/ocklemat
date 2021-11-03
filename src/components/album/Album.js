@@ -4,18 +4,11 @@ import AlbumImage from "../albumImage/AlbumImage";
 import "./album.css";
 import CloseIcon from "@material-ui/icons/Close";
 import BtnModal from "./BtnModal";
+import { Link, Route, useLocation, useHistory } from "react-router-dom";
 
 function Album() {
-  const {
-    albums,
-    getData,
-    modal,
-    setModal,
-    clickedImg,
-    slideIndex,
-    setSlideIndex,
-  } = useContext(AlbumContext);
-  console.log("clickedImg id >>", clickedImg.id);
+  const { albums, getData, slideIndex, setSlideIndex } =
+    useContext(AlbumContext);
 
   useEffect(() => {
     getData();
@@ -25,62 +18,92 @@ function Album() {
   //* Slider Controls
   ///////////
 
-  console.log("slideIndex", slideIndex);
+  const location = useLocation();
+  const history = useHistory();
+  const { state = {} } = location;
+  const { modal } = state;
 
   const nextSlide = () => {
     if (slideIndex >= albums.length - 1) {
+      location.pathname = `/album/${albums[0].id}`;
       setSlideIndex(0);
     } else {
+      history?.push({
+        pathname: `/album/${albums[slideIndex + 1].id}`,
+        state: { modal: true },
+      });
       setSlideIndex(slideIndex + 1);
     }
-
-    // console.log("nextSlide", slideIndex);
   };
 
   const prevSlide = () => {
-    if (slideIndex <= 0) {
+    if (slideIndex === 0) {
+      history?.push({
+        pathname: `/album/${albums[albums.length - 1].id}`,
+        state: { modal: true },
+      });
       setSlideIndex(albums.length - 1);
     } else {
+      history?.push({
+        pathname: `/album/${albums[slideIndex - 1].id}`,
+        state: { modal: true },
+      });
       setSlideIndex(slideIndex - 1);
     }
-
-    // console.log("PrevSlide", slideIndex);
-  };
-
-  const handleOnclick = () => {
-    setModal(false);
-    console.log(modal);
   };
 
   return (
     <div className="Album_Wrapper">
-      <div className={modal ? "modal open" : "modal"}>
-        <div>
-          {/* {albums ? <img src={albums[slideIndex].url} alt="" /> : "nothing"} */}
-          {slideIndex
-            ? console.log("URL displayed >>>", albums[slideIndex].url)
-            : console.log("no slideIndex", slideIndex)}
-          {albums && (
-            <img className="modal-image" src={albums[slideIndex].url} alt="" />
-          )}
+      {albums && modal && (
+        <Route
+          path="/album/:id"
+          children={({ match, history }) => {
+            const id = +match?.params.id;
+            const imageIndex =
+              id && albums.findIndex((image) => image.id === id);
+            setSlideIndex(imageIndex);
 
-          <CloseIcon className="modal-close-btn" onClick={handleOnclick}>
-            close modal
-          </CloseIcon>
+            const close = (e) => {
+              e.stopPropagation();
+              history.push("/");
+            };
 
-          <BtnModal moveSlide={nextSlide} direction={"next"} />
-          <BtnModal moveSlide={prevSlide} direction={"prev"} />
-        </div>
-      </div>
+            return (
+              <div className="modal open">
+                <div>
+                  <img
+                    className="modal-image"
+                    src={albums[slideIndex].url}
+                    alt={albums[slideIndex].title}
+                  />
+
+                  <CloseIcon className="modal-close-btn" onClick={close}>
+                    close modal
+                  </CloseIcon>
+
+                  <BtnModal moveSlide={nextSlide} direction={"next"} />
+                  <BtnModal moveSlide={prevSlide} direction={"prev"} />
+                </div>
+              </div>
+            );
+          }}
+        />
+      )}
+
       <div className="Album_GridContainer">
         {albums &&
           albums.map((item, index) => {
             return (
-              <AlbumImage
-                className="Album_gridImage"
-                key={index}
-                image={item}
-              />
+              <Link
+                to={{ pathname: `/album/${item.id}`, state: { modal: true } }}
+              >
+                {" "}
+                <AlbumImage
+                  className="Album_gridImage"
+                  key={index}
+                  image={item}
+                />
+              </Link>
             );
           })}
       </div>
